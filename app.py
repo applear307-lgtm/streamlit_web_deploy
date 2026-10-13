@@ -267,20 +267,20 @@ if ss.stage == "survey":
 
     with st.form("survey"):
         q1 = checkbox_multiselect(
-            "Q1. '공중 보건'이라는 말을 들었을 때 떠오르는 것을 모두 골라주세요.",
+            "Q1. '공중 보건'이라는 말을 들었을 때 떠오르는 것을 모두 골라주세요. (필수)",
             Q1_OPTIONS,
             "q1_option",
         )
 
         q2 = st.radio(
-            "Q2. 공중 보건과 병원 치료 중 무엇이 더 우선시되어야 한다고 생각하나요?",
+            "Q2. 공중 보건과 병원 치료 중 무엇이 더 우선시되어야 한다고 생각하나요? (필수)",
             Q2_OPTIONS,
             index=None,
         )
         q2_reason = st.text_area("그렇게 생각하는 이유 (선택)", height=80)
 
         q3 = checkbox_multiselect(
-            "Q3. 공중 보건이 어디에 효과적이라고 생각하나요? (복수 선택)",
+            "Q3. 공중 보건이 어디에 효과적이라고 생각하나요? (복수 선택) (필수)",
             Q3_OPTIONS,
             "q3_option",
         )
