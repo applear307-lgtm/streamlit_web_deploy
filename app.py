@@ -33,14 +33,12 @@ PRIZE_IMAGES = {
     "스타벅스 1만원권": "images/prize_starbucks.png",
 }
 
-# 룰렛 판 구성 (칸 크기는 모두 같게 → 확률이 겉으로 드러나지 않아요)
+# 룰렛 화면 구성 (경품과 꽝은 각각 한 칸씩 표시)
+# 실제 당첨 확률은 PRIZES의 가중치로 결정돼요.
 WHEEL = [
     {"prize": "초코에몽", "label": "초코에몽", "color": "#8D5524", "text": "#FFFFFF"},
-    {"prize": "꽝", "label": "꽝", "color": "#ECEFF1", "text": "#546E7A"},
     {"prize": "다이소 5,000원권", "label": "다이소 5,000원", "color": "#E53935", "text": "#FFFFFF"},
-    {"prize": "꽝", "label": "꽝", "color": "#ECEFF1", "text": "#546E7A"},
     {"prize": "박카스 F", "label": "박카스 F", "color": "#1E4DB7", "text": "#FFFFFF"},
-    {"prize": "꽝", "label": "꽝", "color": "#ECEFF1", "text": "#546E7A"},
     {"prize": "스타벅스 1만원권", "label": "스타벅스 1만원", "color": "#00704A", "text": "#FFFFFF"},
     {"prize": "꽝", "label": "꽝", "color": "#ECEFF1", "text": "#546E7A"},
 ]
