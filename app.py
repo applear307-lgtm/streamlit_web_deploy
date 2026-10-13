@@ -68,6 +68,24 @@ HEADER_WINNER = ["시각", "품목", "이메일"]
 
 EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 
+SURVEY_URL = "https://public-health-survey.streamlit.app/"
+SHARE_MESSAGE = (
+    "🎁 공중 보건 인식 설문에 참여하고 룰렛도 돌려보세요! "
+    "주변 친구들에게도 공유해 주세요 😊\n"
+    f"{SURVEY_URL}"
+)
+
+
+def checkbox_multiselect(label: str, options: list, key_prefix: str) -> list:
+    """접고 펼 수 있는 체크박스 목록에서 여러 항목을 선택해요."""
+    selected = []
+    with st.expander(label, expanded=False):
+        st.caption("해당하는 항목을 모두 선택해 주세요.")
+        for index, option in enumerate(options):
+            if st.checkbox(option, key=f"{key_prefix}_{index}"):
+                selected.append(option)
+    return selected
+
 
 # ──────────────────────────────────────────────
 # 저장 (Google Sheets / secrets가 없으면 내 컴퓨터에 CSV로 저장)
@@ -222,6 +240,13 @@ def show_prize_image(prize: str):
             st.image(path, width=320, caption=prize)
 
 
+def show_survey_share():
+    st.markdown("### 📣 친구들에게도 설문을 공유해 주세요!")
+    st.markdown(f"[설문 참여 링크 열기]({SURVEY_URL})")
+    st.caption("아래 문구 오른쪽 위의 복사 아이콘을 누르면 문구와 링크가 함께 복사돼요.")
+    st.code(SHARE_MESSAGE, language="text")
+
+
 # ──────────────────────────────────────────────
 # 세션 상태: survey → spin → result → done
 # ──────────────────────────────────────────────
@@ -241,9 +266,10 @@ if ss.stage == "survey":
     st.caption("설문에 참여하면 룰렛을 돌릴 수 있어요! 🎁")
 
     with st.form("survey"):
-        q1 = st.multiselect(
+        q1 = checkbox_multiselect(
             "Q1. '공중 보건'이라는 말을 들었을 때 떠오르는 것을 모두 골라주세요.",
             Q1_OPTIONS,
+            "q1_option",
         )
 
         q2 = st.radio(
@@ -253,9 +279,10 @@ if ss.stage == "survey":
         )
         q2_reason = st.text_area("그렇게 생각하는 이유 (선택)", height=80)
 
-        q3 = st.multiselect(
+        q3 = checkbox_multiselect(
             "Q3. 공중 보건이 어디에 효과적이라고 생각하나요? (복수 선택)",
             Q3_OPTIONS,
+            "q3_option",
         )
         q3_etc = st.text_input("Q3 기타 의견 (선택)")
 
@@ -339,6 +366,8 @@ elif ss.stage == "result":
                     ss.stage = "done"
                     st.rerun()
 
+        show_survey_share()
+
 # ──────────────────────────────────────────────
 # 4단계: 완료
 # ──────────────────────────────────────────────
@@ -346,4 +375,5 @@ if ss.stage == "done":
     if ss.prize and ss.prize != "꽝":
         st.success(f"✅ {ss.prize} 당첨 정보가 접수되었어요!")
         show_prize_image(ss.prize)
+        show_survey_share()
     st.info("참여해 주셔서 감사합니다. 창을 닫으셔도 좋아요.")
