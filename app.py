@@ -81,10 +81,10 @@ SHARE_MESSAGE = (
 )
 
 
-def checkbox_multiselect(label: str, options: list, key_prefix: str) -> list:
+def checkbox_multiselect(label: str, options: list, key_prefix: str, expanded: bool = False) -> list:
     """접고 펼 수 있는 체크박스 목록에서 여러 항목을 선택해요."""
     selected = []
-    with st.expander(label, expanded=False):
+    with st.expander(label, expanded=expanded):
         st.caption("해당하는 항목을 모두 선택해 주세요.")
         for index, option in enumerate(options):
             if st.checkbox(option, key=f"{key_prefix}_{index}"):
@@ -282,6 +282,7 @@ if ss.stage == "survey":
             "Q2. '공중 보건'이라는 말을 들었을 때 떠오르는 것을 모두 골라주세요. (필수)",
             Q2_OPTIONS,
             "q2_option",
+            expanded=True,
         )
 
         st.info(
@@ -319,6 +320,68 @@ if ss.stage == "survey":
 # ──────────────────────────────────────────────
 # 2단계: 룰렛
 # ──────────────────────────────────────────────
+if ss.stage == "survey":
+    st.caption("설문에 참여하면 룰렛을 돌릴 수 있어요! 🎁")
+
+    if "survey_step" not in ss:
+        ss.survey_step = 1
+
+    if ss.survey_step == 1:
+        st.subheader("1단계: Q1·Q2")
+        with st.form("survey_part1"):
+            q1 = st.radio(
+                "Q1. 이번 설문에 참여하기 전, ‘공중 보건’이라는 개념을 알고 있었나요?",
+                Q1_OPTIONS,
+                index=None,
+            )
+            q2 = checkbox_multiselect(
+                "Q2. ‘공중 보건’이라는 말을 들었을 때 떠오르는 것을 모두 골라주세요. (복수 선택) (필수)",
+                Q2_OPTIONS,
+                "q2_option",
+                expanded=True,
+            )
+            submitted_part1 = st.form_submit_button("Q1·Q2 답변 완료하고 다음으로")
+
+        if submitted_part1:
+            if q1 is None or not q2:
+                st.warning("Q1과 Q2에 모두 답해주세요.")
+            else:
+                ss.survey_q1 = q1
+                ss.survey_q2 = q2
+                ss.survey_step = 2
+                st.rerun()
+    else:
+        st.info("참고: 세계보건기구(WHO) 헌장 전문은 건강을 단순히 질병이나 허약함이 없는 상태가 아니라, 신체적·정신적·사회적으로 완전히 안녕한 상태로 정의합니다. 공중보건은 이러한 건강을 개인의 노력에만 맡기지 않고, 사회와 지역사회가 질병을 예방하고 건강을 증진하기 위해 조직적으로 함께 실천하는 분야입니다.")
+        st.subheader("2단계: Q3·Q4")
+        with st.form("survey_part2"):
+            q3 = st.radio(
+                "Q3. 공중 보건이 우리 삶에 얼마나 효과적이라고 생각하나요?",
+                Q3_OPTIONS,
+                index=None,
+            )
+            q3_reason = st.text_input("Q3. 그렇게 생각한 이유가 있나요? (선택)")
+            q4 = checkbox_multiselect(
+                "Q4. 공중 보건이 어디에 효과적이라고 생각하나요? (복수 선택) (필수)",
+                Q4_OPTIONS,
+                "q4_option",
+            )
+            q4_etc = st.text_input("Q4 기타 의견 (선택)")
+            submitted_part2 = st.form_submit_button("제출하고 룰렛 돌리러 가기 🎡")
+
+        if submitted_part2:
+            if q3 is None or not q4:
+                st.warning("Q3과 Q4에 모두 답해주세요.")
+            else:
+                ok = save_row(
+                    SHEET_RESPONSE, HEADER_RESPONSE,
+                    [now_str(), ss.survey_q1, ", ".join(ss.survey_q2), q3, q3_reason, ", ".join(q4), q4_etc]
+                )
+                if ok:
+                    ss.stage = "spin"
+                    for key in ("survey_step", "survey_q1", "survey_q2"):
+                        ss.pop(key, None)
+                    st.rerun()
+
 elif ss.stage == "spin":
     st.success("설문에 참여해 주셔서 감사합니다! 🙌")
     st.subheader("🎰 룰렛을 돌려보세요")
