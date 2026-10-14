@@ -310,7 +310,7 @@ if ss.stage == "survey":
             )
             q3_reason = st.text_input("그렇게 생각하는 이유 (선택)")
             q4 = checkbox_multiselect(
-                "Q4. 공중 보건이 어디에 효과적이라고 생각하나요? (복수 선택) (필수)",
+                "Q4. 공중 보건이 어느 분야에서 중요하다고 생각하나요? (복수 선택) (필수)",
                 Q4_OPTIONS,
                 "q4_option",
             )
