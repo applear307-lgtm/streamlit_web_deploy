@@ -369,6 +369,7 @@ elif ss.stage == "result":
     else:
         st.balloons()
         st.subheader(f"🎉 축하합니다! **{prize}** 당첨!")
+                st.info("상품을 2개 이상 뽑으신 경우에도, 가장 가격이 높은 상품 1개만 받으실 수 있습니다.")
         show_prize_image(prize)
         st.write("경품을 받을 이메일 주소를 입력해 주세요.")
 
