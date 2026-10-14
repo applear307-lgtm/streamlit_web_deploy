@@ -36,33 +36,38 @@ PRIZE_IMAGES = {
 # 룰렛 화면 구성 (경품과 꽝은 각각 한 칸씩 표시)
 # 실제 당첨 확률은 PRIZES의 가중치로 결정돼요.
 WHEEL = [
-    {"prize": "초코에몽 250ml", "label": "초코에몽 250ml", "color": "#8D5524", "text": "#FFFFFF"},
-    {"prize": "다이소 5,000원권", "label": "다이소 5,000원권", "color": "#E53935", "text": "#FFFFFF"},
+    {"prize": "초코에몽", "label": "초코에몽", "color": "#8D5524", "text": "#FFFFFF"},
+    {"prize": "다이소 5,000원권", "label": "다이소 5,000원", "color": "#E53935", "text": "#FFFFFF"},
     {"prize": "박카스 F", "label": "박카스 F", "color": "#1E4DB7", "text": "#FFFFFF"},
-    {"prize": "스타벅스 1만원권", "label": "스타벅스 1만원권", "color": "#00704A", "text": "#FFFFFF"},
+    {"prize": "스타벅스 1만원권", "label": "스타벅스 1만원", "color": "#00704A", "text": "#FFFFFF"},
     {"prize": "꽝", "label": "꽝", "color": "#ECEFF1", "text": "#546E7A"},
 ]
 SPIN_SECONDS = 5.0  # 룰렛이 도는 시간(초)
 
 Q1_OPTIONS = [
+    "정확한 의미를 알고 있었다",
+    "들어본 적은 있지만 정확한 뜻은 몰랐다",
+    "처음 들어봤다",
+]
+Q2_OPTIONS = [
     "예방", "백신·예방접종", "감염병 관리", "위생·방역",
     "건강검진", "국가·정부의 역할", "금연·절주 캠페인", "잘 모르겠다",
 ]
-Q2_OPTIONS = [
+Q3_OPTIONS = [
     "공중 보건이 더 우선시되어야 한다",
     "병원 치료가 더 우선시되어야 한다",
     "둘 다 똑같이 중요하다",
     "잘 모르겠다",
 ]
-Q3_OPTIONS = [
+Q4_OPTIONS = [
     "감염병 확산 방지", "만성질환 예방", "의료비 절감",
     "건강 격차(불평등) 해소", "평균 수명 연장", "정신건강 증진",
     "응급·재난 대응", "잘 모르겠다", "딱히 효과가 없다고 생각한다"
 ]
 
 # 구글 스프레드시트 탭 이름과 1행 제목 (시트와 똑같이 맞춰야 해요)
-SHEET_RESPONSE = "응답"
-HEADER_RESPONSE = ["시각", "Q1", "Q2", "Q2 이유", "Q3", "Q3 기타"]
+SHEET_RESPONSE = "응답_개편"
+HEADER_RESPONSE = ["시각", "Q1 사전 인지", "Q2 공중 보건 연상", "Q3 우선순위", "Q3 이유", "Q4 효과", "Q4 기타"]
 SHEET_WINNER = "당첨"
 HEADER_WINNER = ["시각", "품목", "이메일"]
 
@@ -266,35 +271,46 @@ if ss.stage == "survey":
     st.caption("설문에 참여하면 룰렛을 돌릴 수 있어요! 🎁")
 
     with st.form("survey"):
-        q1 = checkbox_multiselect(
-            "Q1. '공중 보건'이라는 말을 들었을 때 떠오르는 것을 모두 골라주세요. (필수)",
+        q1 = st.radio(
+            "Q1. 이번 설문에 참여하기 전, '공중 보건'이라는 개념을 알고 있었나요? (필수)",
             Q1_OPTIONS,
-            "q1_option",
-        )
-
-        q2 = st.radio(
-            "Q2. 공중 보건과 병원 치료 중 무엇이 더 우선시되어야 한다고 생각하나요? (필수)",
-            Q2_OPTIONS,
             index=None,
         )
-        q2_reason = st.text_area("그렇게 생각하는 이유 (선택)", height=80)
 
-        q3 = checkbox_multiselect(
-            "Q3. 공중 보건이 어디에 효과적이라고 생각하나요? (복수 선택) (필수)",
-            Q3_OPTIONS,
-            "q3_option",
+        st.info(
+            "참고: WHO 헌장(1948) 전문은 건강을 단순히 질병이 없거나 허약하지 않은 상태만이 아니라, "
+            "신체적·정신적·사회적으로 완전히 안녕한 상태로 설명합니다."
         )
-        q3_etc = st.text_input("Q3 기타 의견 (선택)")
+
+        q2 = checkbox_multiselect(
+            "Q2. '공중 보건'이라는 말을 들었을 때 떠오르는 것을 모두 골라주세요. (필수)",
+            Q2_OPTIONS,
+            "q2_option",
+        )
+
+        q3 = st.radio(
+            "Q3. 공중 보건과 병원 치료 중 무엇이 더 우선시되어야 한다고 생각하나요? (필수)",
+            Q3_OPTIONS,
+            index=None,
+        )
+        q3_reason = st.text_area("그렇게 생각하는 이유 (선택)", height=80)
+
+        q4 = checkbox_multiselect(
+            "Q4. 공중 보건이 어디에 효과적이라고 생각하나요? (복수 선택) (필수)",
+            Q4_OPTIONS,
+            "q4_option",
+        )
+        q4_etc = st.text_input("Q4 기타 의견 (선택)")
 
         submitted = st.form_submit_button("제출하고 룰렛 돌리러 가기 🎰", type="primary")
 
     if submitted:
-        if not q1 or q2 is None or not q3:
-            st.warning("Q1, Q2, Q3 모두 답변해 주세요.")
+        if q1 is None or not q2 or q3 is None or not q4:
+            st.warning("Q1, Q2, Q3, Q4 모두 답변해 주세요.")
         else:
             ok = save_row(
                 SHEET_RESPONSE, HEADER_RESPONSE,
-                [now_str(), ", ".join(q1), q2, q2_reason, ", ".join(q3), q3_etc],
+                [now_str(), q1, ", ".join(q2), q3, q3_reason, ", ".join(q4), q4_etc],
             )
             if ok:
                 ss.stage = "spin"
