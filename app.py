@@ -267,59 +267,7 @@ if not sheets_enabled():
 # ──────────────────────────────────────────────
 # 1단계: 설문
 # ──────────────────────────────────────────────
-if ss.stage == "survey":
-    st.caption("설문에 참여하면 룰렛을 돌릴 수 있어요! 🎁")
 
-    with st.form("survey"):
-        q1 = st.radio(
-            "Q1. 이번 설문에 참여하기 전, '공중 보건'이라는 개념을 알고 있었나요? (필수)",
-            Q1_OPTIONS,
-            index=None,
-        )
-
-        
-        q2 = checkbox_multiselect(
-            "Q2. '공중 보건'이라는 말을 들었을 때 떠오르는 것을 모두 골라주세요. (필수)",
-            Q2_OPTIONS,
-            "q2_option",
-            expanded=True,
-        )
-
-        st.info(
-                    "참고: WHO 헌장(1948) 전문은 건강을 단순히 질병이 없거나 허약하지 않은 상태만이 아니라, "
-                    "신체적·정신적·사회적으로 완전히 안녕한 상태로 설명합니다. 또한 전문은 사람들의 건강 증진을 위해 대중의 올바른 이해와 적극적 협력이 중요하고, 정부는 적절한 보건·사회적 조치를 통해 국민 건강을 책임져야 한다고 밝힙니다."
-                )
-        q3 = st.radio(
-            "Q3. 공중 보건과 병원 치료 중 무엇이 더 우선시되어야 한다고 생각하나요? (필수)",
-            Q3_OPTIONS,
-            index=None,
-        )
-        q3_reason = st.text_area("그렇게 생각하는 이유 (선택)", height=80)
-
-        q4 = checkbox_multiselect(
-            "Q4. 공중 보건이 어디에 효과적이라고 생각하나요? (복수 선택) (필수)",
-            Q4_OPTIONS,
-            "q4_option",
-        )
-        q4_etc = st.text_input("Q4 기타 의견 (선택)")
-
-        submitted = st.form_submit_button("제출하고 룰렛 돌리러 가기 🎰", type="primary")
-
-    if submitted:
-        if q1 is None or not q2 or q3 is None or not q4:
-            st.warning("Q1, Q2, Q3, Q4 모두 답변해 주세요.")
-        else:
-            ok = save_row(
-                SHEET_RESPONSE, HEADER_RESPONSE,
-                [now_str(), q1, ", ".join(q2), q3, q3_reason, ", ".join(q4), q4_etc],
-            )
-            if ok:
-                ss.stage = "spin"
-                st.rerun()
-
-# ──────────────────────────────────────────────
-# 2단계: 룰렛
-# ──────────────────────────────────────────────
 if ss.stage == "survey":
     st.caption("설문에 참여하면 룰렛을 돌릴 수 있어요! 🎁")
 
@@ -351,22 +299,22 @@ if ss.stage == "survey":
                 ss.survey_step = 2
                 st.rerun()
     else:
-        st.info("참고: 세계보건기구(WHO) 헌장 전문은 건강을 단순히 질병이나 허약함이 없는 상태가 아니라, 신체적·정신적·사회적으로 완전히 안녕한 상태로 정의합니다. 공중보건은 이러한 건강을 개인의 노력에만 맡기지 않고, 사회와 지역사회가 질병을 예방하고 건강을 증진하기 위해 조직적으로 함께 실천하는 분야입니다.")
+        st.info("참고: 세계보건기구(WHO) 헌장 전문은 건강을 단순히 질병이나 허약함이 없는 상태가 아니라, 신체적·정신적·사회적으로 완전히 안녕한 상태로 정의합니다. 공중보건은 이 건강을 개인의 노력에만 맡기지 않고, 사회와 지역사회가 질병을 예방하고 건강을 증진하기 위해 조직적으로 함께 실천하는 분야입니다.")
         st.subheader("2단계: Q3·Q4")
         with st.form("survey_part2"):
             q3 = st.radio(
-                "Q3. 공중 보건이 우리 삶에 얼마나 효과적이라고 생각하나요?",
+                "Q3. 공중 보건과 병원 치료 중 무엇이 더 우선시되어야 한다고 생각하나요?",
                 Q3_OPTIONS,
                 index=None,
             )
-            q3_reason = st.text_input("Q3. 그렇게 생각한 이유가 있나요? (선택)")
+            q3_reason = st.text_input("그렇게 생각하는 이유 (선택)")
             q4 = checkbox_multiselect(
                 "Q4. 공중 보건이 어디에 효과적이라고 생각하나요? (복수 선택) (필수)",
                 Q4_OPTIONS,
                 "q4_option",
             )
             q4_etc = st.text_input("Q4 기타 의견 (선택)")
-            submitted_part2 = st.form_submit_button("제출하고 룰렛 돌리러 가기 🎡")
+            submitted_part2 = st.form_submit_button("제출하고 룰렛 돌리러 가기 🎰")
 
         if submitted_part2:
             if q3 is None or not q4:
