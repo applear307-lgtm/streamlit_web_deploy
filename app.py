@@ -270,6 +270,7 @@ if not sheets_enabled():
 
 if ss.stage == "survey":
     st.caption("설문에 참여하면 룰렛을 돌릴 수 있어요! 🎁")
+    st.caption("📅 설문 참여 기간은 10월 18일(일) 24:00까지입니다.")
 
     if "survey_step" not in ss:
         ss.survey_step = 1
