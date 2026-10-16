@@ -27,7 +27,7 @@ PRIZES = [
 
 # 당첨 화면에 보여줄 이미지 (app.py 기준 상대 경로)
 PRIZE_IMAGES = {
-    "초코에몽": "images/prize_choco.png",
+    "초코에몽 250ml": "images/prize_choco.png",
     "다이소 5,000원권": "images/prize_daiso.png",
     "박카스 F": "images/prize_bacchus.png",
     "스타벅스 1만원권": "images/prize_starbucks.png",
@@ -36,10 +36,10 @@ PRIZE_IMAGES = {
 # 룰렛 화면 구성 (경품과 꽝은 각각 한 칸씩 표시)
 # 실제 당첨 확률은 PRIZES의 가중치로 결정돼요.
 WHEEL = [
-    {"prize": "초코에몽", "label": "초코에몽", "color": "#8D5524", "text": "#FFFFFF"},
-    {"prize": "다이소 5,000원권", "label": "다이소 5,000원", "color": "#E53935", "text": "#FFFFFF"},
+    {"prize": "초코에몽 250ml", "label": "초코에몽 250ml", "color": "#8D5524", "text": "#FFFFFF"},
+    {"prize": "다이소 5,000원권", "label": "다이소 5,000원권", "color": "#E53935", "text": "#FFFFFF"},
     {"prize": "박카스 F", "label": "박카스 F", "color": "#1E4DB7", "text": "#FFFFFF"},
-    {"prize": "스타벅스 1만원권", "label": "스타벅스 1만원", "color": "#00704A", "text": "#FFFFFF"},
+    {"prize": "스타벅스 1만원권", "label": "스타벅스 1만원권", "color": "#00704A", "text": "#FFFFFF"},
     {"prize": "꽝", "label": "꽝", "color": "#ECEFF1", "text": "#546E7A"},
 ]
 SPIN_SECONDS = 5.0  # 룰렛이 도는 시간(초)
